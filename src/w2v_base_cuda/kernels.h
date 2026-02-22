@@ -38,7 +38,7 @@ __global__ void sgns_apply_center_kernel(
     float lr
 );
 
-// (Optional) keep your loss kernel unchanged if you want
+//  Compute the loss for SGNS
 __global__ void sgns_loss_kernel(
     const float* W_in,
     const float* W_out,

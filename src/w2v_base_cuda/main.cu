@@ -12,9 +12,9 @@
 #include "../utils.h"
 #include "kernels.h"
 
-// -----------------------------
+
 // Hyperparameters
-// -----------------------------
+
 int EMB_DIM     = 288;
 int WINDOW_SIZE = 1;
 int NUM_NEG     = 60;
@@ -24,7 +24,7 @@ int EPOCHS      = 15;
 static constexpr float LR0       = 0.05f;
 static constexpr float LR_DECAY  = 0.90f;
 
-// dataset path relative to w2v_base_cuda/
+// dataset path
 static const std::string TEXT_PATH =
     "../cpu/data/text8_500k";
 
@@ -32,6 +32,9 @@ static const std::string TEXT_PATH =
 static const std::string OUT_EMB_FILE =
     "word_embeddings_cuda_base_stable.bin";
 
+
+// helper function to parse command-line arguments and set the values
+// for embedding dimension, batch size, and number of epochs.
 static void parse_args(
     int argc, char** argv,
     int& emb_dim,
@@ -61,9 +64,9 @@ static void parse_args(
     }
 }
 
-// -----------------------------
+
 // CUDA error checking
-// -----------------------------
+
 #define CUDA_CHECK(call)                                                     \
     do {                                                                     \
         cudaError_t err = (call);                                            \
@@ -75,9 +78,9 @@ static void parse_args(
         }                                                                    \
     } while (0)
 
-// -----------------------------
-// Save embeddings
-// -----------------------------
+
+// save embeddings function
+
 static void save_embeddings(const float* h_W,
                             int vocab_size,
                             int emb_dim,
@@ -92,9 +95,8 @@ int main(int argc, char** argv) {
     try {
         std::cout << "CUDA SGNS BASE (Option B – stable)\n";
 
-        // -----------------------------
-        // Load dataset
-        // -----------------------------
+
+        // load dataset
         parse_args(argc, argv, EMB_DIM, BATCH_SIZE, EPOCHS);
 
         //check size of Embedding which will be the size of a block
@@ -116,9 +118,9 @@ int main(int argc, char** argv) {
         std::cout << "Vocab size      : " << V << "\n";
         std::cout << "Batches / epoch : " << batches_per_epoch << "\n\n";
 
-        // -----------------------------
-        // Allocate embeddings
-        // -----------------------------
+
+        // allocate embeddings
+
         float* d_W_in  = nullptr;
         float* d_W_out = nullptr;
 
@@ -127,7 +129,7 @@ int main(int argc, char** argv) {
         CUDA_CHECK(cudaMalloc(&d_W_out,
             static_cast<size_t>(V) * EMB_DIM * sizeof(float)));
 
-        // Init embeddings
+        // init embeddings
         {
             int total = V * EMB_DIM;
             int threads = 256;
@@ -139,9 +141,9 @@ int main(int argc, char** argv) {
             CUDA_CHECK(cudaDeviceSynchronize());
         }
 
-        // -----------------------------
-        // Allocate batch buffers
-        // -----------------------------
+
+        // allocate batch buffers
+
         int* d_center = nullptr;
         int* d_pos    = nullptr;
         int* d_neg    = nullptr;
@@ -164,14 +166,15 @@ int main(int argc, char** argv) {
         CUDA_CHECK(cudaMalloc(&d_loss,
             BATCH_SIZE * sizeof(float)));
 
-        // -----------------------------
-        // Training loop + timing
-        // -----------------------------
+
+        // training loop + timing
+
         float lr = LR0;
 
         CUDA_CHECK(cudaDeviceSynchronize());
         auto t_start = std::chrono::high_resolution_clock::now();
 
+       
         for (int epoch = 0; epoch < EPOCHS; ++epoch) {
             dataset.reset();
 
@@ -196,28 +199,35 @@ int main(int argc, char** argv) {
                 dim3 grid(BATCH_SIZE);
                 dim3 block(EMB_DIM);
                 size_t shmem = EMB_DIM * sizeof(float);
+                 
+                 // This section of code executes three CUDA kernels in sequence during each epoch of training.
+                 // 1. The first kernel, updates the gradient for positive samples 
+                 //    (`d_grad_pos`) based on the input word embeddings and the positive context words.
 
-                // -----------------------------
-                // 1) Positive (update W_out, write grad_pos)
-                // -----------------------------
+
+                 // The kernels are executed in sequence, ensuring that the gradients are computed and 
+                 //       available for the final update in the third kernel.
+
                 sgns_positive_out_kernel<<<grid, block, shmem>>>(
                     d_W_in, d_W_out,
                     d_center, d_pos,
                     d_grad_pos,
                     V, EMB_DIM, lr);
 
-                // -----------------------------
-                // 2) Negative (update W_out, write grad_neg)
-                // -----------------------------
+
+                 // 2. The second kernel, updates the gradient for negative samples 
+                 //    (`d_grad_neg`) using the same input embeddings and the negative context words.
+
                 sgns_negative_out_kernel<<<grid, block, shmem>>>(
                     d_W_in, d_W_out,
                     d_center, d_neg,
                     d_grad_neg,
                     V, EMB_DIM, NUM_NEG, lr);
 
-                // -----------------------------
-                // 3) Apply center update once
-                // -----------------------------
+
+                 // 3. The third kernel, applies the updates to the word embedding weights 
+                 //    using the gradients computed from the first two kernels (`d_grad_pos` and `d_grad_neg`).
+
                 sgns_apply_center_kernel<<<grid, block>>>(
                     d_W_in,
                     d_center,
@@ -225,9 +235,9 @@ int main(int argc, char** argv) {
                     d_grad_neg,
                     V, EMB_DIM, lr);
 
-                // -----------------------------
+
                 // Loss monitoring
-                // -----------------------------
+
                 if ((b + 1) % 50 == 0 || (b + 1) == batches_per_epoch) {
                     sgns_loss_kernel<<<grid, block, shmem>>>(
                         d_W_in, d_W_out,
@@ -269,9 +279,9 @@ int main(int argc, char** argv) {
         std::cout << "\nTotal training time: "
                   << seconds << " seconds\n";
 
-        // -----------------------------
+
         // Save embeddings
-        // -----------------------------
+
         float* h_W_in =
             new float[static_cast<size_t>(V) * EMB_DIM];
 
@@ -286,9 +296,9 @@ int main(int argc, char** argv) {
 
         delete[] h_W_in;
 
-        // -----------------------------
+
         // Cleanup
-        // -----------------------------
+ 
         cudaFree(d_W_in);
         cudaFree(d_W_out);
         cudaFree(d_center);

@@ -129,26 +129,12 @@ w2v_base_cuda_train/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_base_cuda_train.dir/build.make CMakeFiles/w2v_base_cuda_train.dir/build
 .PHONY : w2v_base_cuda_train/fast
 
-#=============================================================================
-# Target rules for targets named w2v_opt_cuda_train
-
-# Build rule for target.
-w2v_opt_cuda_train: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 w2v_opt_cuda_train
-.PHONY : w2v_opt_cuda_train
-
-# fast build rule for target.
-w2v_opt_cuda_train/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_opt_cuda_train.dir/build.make CMakeFiles/w2v_opt_cuda_train.dir/build
-.PHONY : w2v_opt_cuda_train/fast
-
 dataset.o: dataset.cpp.o
 .PHONY : dataset.o
 
 # target to build an object file
 dataset.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_base_cuda_train.dir/build.make CMakeFiles/w2v_base_cuda_train.dir/dataset.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_opt_cuda_train.dir/build.make CMakeFiles/w2v_opt_cuda_train.dir/dataset.cpp.o
 .PHONY : dataset.cpp.o
 
 dataset.i: dataset.cpp.i
@@ -157,7 +143,6 @@ dataset.i: dataset.cpp.i
 # target to preprocess a source file
 dataset.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_base_cuda_train.dir/build.make CMakeFiles/w2v_base_cuda_train.dir/dataset.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_opt_cuda_train.dir/build.make CMakeFiles/w2v_opt_cuda_train.dir/dataset.cpp.i
 .PHONY : dataset.cpp.i
 
 dataset.s: dataset.cpp.s
@@ -166,7 +151,6 @@ dataset.s: dataset.cpp.s
 # target to generate assembly for a file
 dataset.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_base_cuda_train.dir/build.make CMakeFiles/w2v_base_cuda_train.dir/dataset.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_opt_cuda_train.dir/build.make CMakeFiles/w2v_opt_cuda_train.dir/dataset.cpp.s
 .PHONY : dataset.cpp.s
 
 utils.o: utils.cu.o
@@ -175,7 +159,6 @@ utils.o: utils.cu.o
 # target to build an object file
 utils.cu.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_base_cuda_train.dir/build.make CMakeFiles/w2v_base_cuda_train.dir/utils.cu.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_opt_cuda_train.dir/build.make CMakeFiles/w2v_opt_cuda_train.dir/utils.cu.o
 .PHONY : utils.cu.o
 
 utils.i: utils.cu.i
@@ -184,7 +167,6 @@ utils.i: utils.cu.i
 # target to preprocess a source file
 utils.cu.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_base_cuda_train.dir/build.make CMakeFiles/w2v_base_cuda_train.dir/utils.cu.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_opt_cuda_train.dir/build.make CMakeFiles/w2v_opt_cuda_train.dir/utils.cu.i
 .PHONY : utils.cu.i
 
 utils.s: utils.cu.s
@@ -193,7 +175,6 @@ utils.s: utils.cu.s
 # target to generate assembly for a file
 utils.cu.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_base_cuda_train.dir/build.make CMakeFiles/w2v_base_cuda_train.dir/utils.cu.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_opt_cuda_train.dir/build.make CMakeFiles/w2v_opt_cuda_train.dir/utils.cu.s
 .PHONY : utils.cu.s
 
 w2v_base_cuda/kernels.o: w2v_base_cuda/kernels.cu.o
@@ -244,54 +225,6 @@ w2v_base_cuda/main.cu.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_base_cuda_train.dir/build.make CMakeFiles/w2v_base_cuda_train.dir/w2v_base_cuda/main.cu.s
 .PHONY : w2v_base_cuda/main.cu.s
 
-w2v_optimized_cuda/kernels.o: w2v_optimized_cuda/kernels.cu.o
-.PHONY : w2v_optimized_cuda/kernels.o
-
-# target to build an object file
-w2v_optimized_cuda/kernels.cu.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_opt_cuda_train.dir/build.make CMakeFiles/w2v_opt_cuda_train.dir/w2v_optimized_cuda/kernels.cu.o
-.PHONY : w2v_optimized_cuda/kernels.cu.o
-
-w2v_optimized_cuda/kernels.i: w2v_optimized_cuda/kernels.cu.i
-.PHONY : w2v_optimized_cuda/kernels.i
-
-# target to preprocess a source file
-w2v_optimized_cuda/kernels.cu.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_opt_cuda_train.dir/build.make CMakeFiles/w2v_opt_cuda_train.dir/w2v_optimized_cuda/kernels.cu.i
-.PHONY : w2v_optimized_cuda/kernels.cu.i
-
-w2v_optimized_cuda/kernels.s: w2v_optimized_cuda/kernels.cu.s
-.PHONY : w2v_optimized_cuda/kernels.s
-
-# target to generate assembly for a file
-w2v_optimized_cuda/kernels.cu.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_opt_cuda_train.dir/build.make CMakeFiles/w2v_opt_cuda_train.dir/w2v_optimized_cuda/kernels.cu.s
-.PHONY : w2v_optimized_cuda/kernels.cu.s
-
-w2v_optimized_cuda/main.o: w2v_optimized_cuda/main.cu.o
-.PHONY : w2v_optimized_cuda/main.o
-
-# target to build an object file
-w2v_optimized_cuda/main.cu.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_opt_cuda_train.dir/build.make CMakeFiles/w2v_opt_cuda_train.dir/w2v_optimized_cuda/main.cu.o
-.PHONY : w2v_optimized_cuda/main.cu.o
-
-w2v_optimized_cuda/main.i: w2v_optimized_cuda/main.cu.i
-.PHONY : w2v_optimized_cuda/main.i
-
-# target to preprocess a source file
-w2v_optimized_cuda/main.cu.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_opt_cuda_train.dir/build.make CMakeFiles/w2v_opt_cuda_train.dir/w2v_optimized_cuda/main.cu.i
-.PHONY : w2v_optimized_cuda/main.cu.i
-
-w2v_optimized_cuda/main.s: w2v_optimized_cuda/main.cu.s
-.PHONY : w2v_optimized_cuda/main.s
-
-# target to generate assembly for a file
-w2v_optimized_cuda/main.cu.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/w2v_opt_cuda_train.dir/build.make CMakeFiles/w2v_opt_cuda_train.dir/w2v_optimized_cuda/main.cu.s
-.PHONY : w2v_optimized_cuda/main.cu.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -301,7 +234,6 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... w2v_base_cuda_train"
-	@echo "... w2v_opt_cuda_train"
 	@echo "... dataset.o"
 	@echo "... dataset.i"
 	@echo "... dataset.s"
@@ -314,12 +246,6 @@ help:
 	@echo "... w2v_base_cuda/main.o"
 	@echo "... w2v_base_cuda/main.i"
 	@echo "... w2v_base_cuda/main.s"
-	@echo "... w2v_optimized_cuda/kernels.o"
-	@echo "... w2v_optimized_cuda/kernels.i"
-	@echo "... w2v_optimized_cuda/kernels.s"
-	@echo "... w2v_optimized_cuda/main.o"
-	@echo "... w2v_optimized_cuda/main.i"
-	@echo "... w2v_optimized_cuda/main.s"
 .PHONY : help
 
 

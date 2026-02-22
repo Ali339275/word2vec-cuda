@@ -4,7 +4,7 @@
 #include <cuda_runtime.h>
 
 
-// shared-memory reduction
+// shared-memory reduction, can be called from other GPU code, __forceinline__ to reduce call overhead
 __device__ __forceinline__
 float block_reduce_sum(float* sh, int tid, int n) {
     __syncthreads();
@@ -15,10 +15,13 @@ float block_reduce_sum(float* sh, int tid, int n) {
     return sh[0];
 }
 
-// =======================================================
-// Kernel 1: Positive — update ONLY W_out(pos),
-//          write grad_in_pos[sample,d] = g_pos * out_p_old
-// =======================================================
+
+// Kernel 1: Positive — update
+// updating the output weights based on positive samples in the Skip-Gram Negative Sampling (SGNS) algorithm.
+// This kernel computes the dot product of the input and output embeddings for a given center and positive context word,
+// saving the intermediate results to shared memory. A block-level reduction is performed on the shared memory to compute
+// the dot product, which is then used to calculate the gradient and update the output embedding.
+
 __global__ void sgns_positive_out_kernel(
     const float* W_in,
     float* W_out,
@@ -48,7 +51,6 @@ __global__ void sgns_positive_out_kernel(
     sh[d] = in_old * out_old;
     float dot = block_reduce_sum(sh, d, emb_dim);
 
-    // y=1 => g = sigmoid(dot) - 1
     float g = sigmoid(dot) - 1.0f;
 
     // grad wrt center: g * out_old
@@ -59,11 +61,12 @@ __global__ void sgns_positive_out_kernel(
     atomicAdd(&out_p[d], -lr * g * in_old);
 }
 
-// =======================================================
-// Kernel 2: Negative — update ONLY W_out(neg),
-//          write grad_in_neg[sample,d] = sum_k g_neg * out_n_old
+
+// Kernel 2: Negative — update
 // One block per sample, loop over negatives inside the block
-// =======================================================
+// This kernel computes the dot product of the input and negative context embeddings,
+// performing a reduction to accumulate gradients for the center word across all negative samples.
+
 __global__ void sgns_negative_out_kernel(
     const float* W_in,
     float* W_out,
@@ -111,12 +114,12 @@ __global__ void sgns_negative_out_kernel(
     grad_in_neg[(size_t)sample * emb_dim + d] = accum;
 }
 
-// =======================================================
+
 // Kernel 3: Apply center update once per sample
 // W_in[c,d] -= lr * (grad_in_pos + grad_in_neg)
 // Atomic is recommended because same word id can appear
 // in multiple samples concurrently.
-// =======================================================
+
 __global__ void sgns_apply_center_kernel(
     float* W_in,
     const int* center_ids,
@@ -139,9 +142,13 @@ __global__ void sgns_apply_center_kernel(
     atomicAdd(&W_in[(size_t)c * emb_dim + d], -lr * g);
 }
 
-// =======================================================
-// Your loss kernel can stay exactly as you already have it
-// =======================================================
+
+// This kernel computes the loss for the Skip-Gram Negative Sampling (SGNS) model.
+// It calculates the dot product between the input vector of the center word and 
+// the output vector of the positive word, and sums the contributions from negative samples.
+ 
+// The kernel uses shared memory to compute the dot products efficiently and 
+// applies the log-sigmoid function to calculate the loss for each sample.
 __global__ void sgns_loss_kernel(
     const float* W_in,
     const float* W_out,
