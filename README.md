@@ -18,8 +18,11 @@ w2v_cpp_project/
 │   ├── cpu/                # PyTorch implementation
 │   ├── w2v_base_cuda/      # CUDA kernels (baseline)
 │   ├── build/              # Compiled CUDA binaries
-│
-├── CMakeLists.txt
+│   ├── CMakeLists.txt
+│   ├── dataset.cpp
+│   ├── dataset.h
+│   ├── utils.cu
+│   ├── utils.h
 ├── README.md
 ```
 
