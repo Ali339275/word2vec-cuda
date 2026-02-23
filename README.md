@@ -32,16 +32,6 @@ w2v_cpp_project/
 
 ## 🔹 Build CUDA Version
 
-From the project root:
-
-```bash
-make clean
-cmake ..
-make -j
-```
-
-Or manually using CMake:
-
 ```bash
 mkdir -p src/build
 cd src/build
