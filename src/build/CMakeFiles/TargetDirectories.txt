@@ -1,3 +1,0 @@
-/user/0/shahimia/Desktop/w2v_cpp_project/src/build/CMakeFiles/w2v_base_cuda_train.dir
-/user/0/shahimia/Desktop/w2v_cpp_project/src/build/CMakeFiles/edit_cache.dir
-/user/0/shahimia/Desktop/w2v_cpp_project/src/build/CMakeFiles/rebuild_cache.dir
